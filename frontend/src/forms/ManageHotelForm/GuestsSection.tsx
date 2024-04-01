@@ -17,6 +17,7 @@ const GuestsSection = () => {
             className="border rounded w-full py-2 px-3 font-normal"
             type="number"
             min={1}
+            max={4}
             {...register("guestCount", {
               required: "This field is required",
             })}

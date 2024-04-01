@@ -9,9 +9,9 @@ export type UserType = {
 export type HotelType = {
   _id: string;
   userId: string;
-  name: string
+  branchName: string
   description: string;
-  branch: string;
+  type: string;
   guestCount: number;
   facilities: string[];
   pricePerNight: number;

@@ -1,6 +1,6 @@
 import { FormProvider, useForm } from "react-hook-form";
 import DetailsSection from "./DetailsSection";
-import BranchSection from "./BranchSection";
+import TypeSection from "./TypeSection";
 import FacilitiesSection from "./FacilitiesSection";
 import GuestsSection from "./GuestsSection";
 import ImagesSection from "./ImagesSection";
@@ -8,9 +8,9 @@ import { HotelType } from "../../../../backend/src/shared/types";
 import { useEffect } from "react";
 
 export type HotelFormData = {
-  name: string;
+  branchName: string;
   description: string;
-  branch: string;
+  type: string;
   pricePerNight: number;
   starRating: number;
   facilities: string[];
@@ -38,9 +38,9 @@ const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
     if (hotel) {
       formData.append("hotelId", hotel._id);
     }
-    formData.append("name", formDataJson.name);
+    formData.append("branchName", formDataJson.branchName);
     formData.append("description", formDataJson.description);
-    formData.append("branch", formDataJson.branch);
+    formData.append("type", formDataJson.type);
     formData.append("pricePerNight", formDataJson.pricePerNight.toString());
     formData.append("starRating", formDataJson.starRating.toString());
     formData.append("guestCount", formDataJson.guestCount.toString());
@@ -66,7 +66,7 @@ const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
     <FormProvider {...formMethods}>
       <form className="flex flex-col gap-10" onSubmit={onSubmit}>
         <DetailsSection />
-        <BranchSection />
+        <TypeSection />
         <FacilitiesSection />
         <GuestsSection />
         <ImagesSection />
@@ -74,7 +74,7 @@ const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
           <button
             disabled={isLoading}
             type="submit"
-            className="bg-blue-600 text-white p-2 font-bold hover:bg-blue-500 text-xl disabled:bg-gray-500"
+            className="bg-orange-500 text-white p-2 font-bold hover:bg-orange-300 text-xl disabled:bg-gray-500"
           >
             {isLoading ? "Saving..." : "Save"}
           </button>

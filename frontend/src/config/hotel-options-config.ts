@@ -1,4 +1,4 @@
-export const hotelBranches = [
+export const hotelTypes = [
   "Budget",
   "Boutique",
   "Luxury",

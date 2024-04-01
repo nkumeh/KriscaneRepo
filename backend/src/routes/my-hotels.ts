@@ -23,9 +23,9 @@ router.post(
   verifyToken,
   [
     // check validity of fields befor api call to db
-    body("name").notEmpty().withMessage("Name is required"),
+    body("branchName").notEmpty().withMessage("Branch name is required"),
     body("description").notEmpty().withMessage("Description is required"),
-    body("branch").notEmpty().withMessage("Hotel branch name is required"),
+    body("type").notEmpty().withMessage("Hotel type is required"),
     body("pricePerNight")
       .notEmpty()
       .isNumeric()
