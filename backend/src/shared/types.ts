@@ -9,13 +9,10 @@ export type UserType = {
 export type HotelType = {
   _id: string;
   userId: string;
-  name: string;
-  // city: string;
-  // country: string;
+  name: string
   description: string;
-  type: string;
-  adultCount: number;
-  childCount: number;
+  branch: string;
+  guestCount: number;
   facilities: string[];
   pricePerNight: number;
   starRating: number;
@@ -30,8 +27,7 @@ export type BookingType = {
   firstName: string;
   lastName: string;
   email: string;
-  adultCount: number;
-  childCount: number;
+  guestCount: number;
   checkIn: Date;
   checkOut: Date;
   totalCost: number;

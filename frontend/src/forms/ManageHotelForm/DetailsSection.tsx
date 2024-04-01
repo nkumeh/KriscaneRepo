@@ -23,28 +23,6 @@ const DetailsSection = () => {
       </label>
 
       <div className="flex gap-4">
-        <label className="text-gray-700 text-sm font-bold flex-1">
-          City
-          <input
-            type="text"
-            className="border rounded w-full py-1 px-2 font-normal"
-            {...register("city", { required: "This field is required" })}
-          ></input>
-          {errors.city && (
-            <span className="text-red-500">{errors.city.message}</span>
-          )}
-        </label>
-        <label className="text-gray-700 text-sm font-bold flex-1">
-          Country
-          <input
-            type="text"
-            className="border rounded w-full py-1 px-2 font-normal"
-            {...register("country", { required: "This field is required" })}
-          ></input>
-          {errors.country && (
-            <span className="text-red-500">{errors.country.message}</span>
-          )}
-        </label>
       </div>
       <label className="text-gray-700 text-sm font-bold flex-1">
         Description

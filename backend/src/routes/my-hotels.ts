@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
-// import multer from "multer";
-// import cloudinary from "cloudinary";
+import multer from "multer";
+import cloudinary from "cloudinary";
 import Hotel from "../models/hotel";
 import verifyToken from "../middleware/auth";
 import { body } from "express-validator";
@@ -8,55 +8,59 @@ import { HotelType } from "../shared/types";
 
 const router = express.Router();
 
-// const storage = multer.memoryStorage();
-// const upload = multer({
-//   storage: storage,
-//   limits: {
-//     fileSize: 5 * 1024 * 1024, // 5MB
-//   },
-// });
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage: storage,
+  limits: {
+    // in bytes, can change the 5 if needed
+    fileSize: 5 * 1024 * 1024, // 5MB
+  },
+});
 
-// router.post(
-//   "/",
-//   verifyToken,
-//   [
-//     body("name").notEmpty().withMessage("Name is required"),
-//     // body("city").notEmpty().withMessage("City is required"),
-//     // body("country").notEmpty().withMessage("Country is required"),
-//     // body("description").notEmpty().withMessage("Description is required"),
-//     body("type").notEmpty().withMessage("Hotel type is required"),
-//     body("pricePerNight")
-//       .notEmpty()
-//       .isNumeric()
-//       .withMessage("Price per night is required and must be a number"),
-//     body("facilities")
-//       .notEmpty()
-//       .isArray()
-//       .withMessage("Facilities are required"),
-//   ],
-//   upload.array("imageFiles", 6),
-//   async (req: Request, res: Response) => {
-//     try {
-//       const imageFiles = req.files as Express.Multer.File[];
-//       const newHotel: HotelType = req.body;
+// allows admin user to add new kriscane branch incase of expansion
+router.post(
+  "/",
+  verifyToken,
+  [
+    // check validity of fields befor api call to db
+    body("name").notEmpty().withMessage("Name is required"),
+    body("description").notEmpty().withMessage("Description is required"),
+    body("branch").notEmpty().withMessage("Hotel branch name is required"),
+    body("pricePerNight")
+      .notEmpty()
+      .isNumeric()
+      .withMessage("Price per night is required and must be a number"),
+    body("facilities")
+      .notEmpty()
+      .isArray()
+      .withMessage("Facilities are required"),
+  ],
+  upload.array("imageFiles", 6),
+  async (req: Request, res: Response) => {
+    try {
+      const imageFiles = req.files as Express.Multer.File[];
+      const newHotel: HotelType = req.body;
 
-//       const imageUrls = await uploadImages(imageFiles);
+      const imageUrls = await uploadImages(imageFiles);
 
-//       newHotel.imageUrls = imageUrls;
-//       newHotel.lastUpdated = new Date();
-//       newHotel.userId = req.userId;
+      newHotel.imageUrls = imageUrls;
+      newHotel.lastUpdated = new Date();
+      newHotel.userId = req.userId;
 
-//       const hotel = new Hotel(newHotel);
-//       await hotel.save();
+      // save hotel in db
+      const hotel = new Hotel(newHotel);
+      await hotel.save();
 
-//       res.status(201).send(hotel);
-//     } catch (e) {
-//       console.log(e);
-//       res.status(500).json({ message: "Something went wrong" });
-//     }
-//   }
-// );
+      // success status
+      res.status(201).send(hotel);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: "Something went wrong" });
+    }
+  }
+);
 
+// only logged in admin can access this information
 router.get("/", verifyToken, async (req: Request, res: Response) => {
   try {
     const hotels = await Hotel.find({ userId: req.userId });
@@ -117,16 +121,21 @@ router.get("/:id", verifyToken, async (req: Request, res: Response) => {
 //   }
 // );
 
-// async function uploadImages(imageFiles: Express.Multer.File[]) {
-//   const uploadPromises = imageFiles.map(async (image) => {
-//     const b64 = Buffer.from(image.buffer).toString("base64");
-//     let dataURI = "data:" + image.mimetype + ";base64," + b64;
-//     const res = await cloudinary.v2.uploader.upload(dataURI);
-//     return res.url;
-//   });
+// upload images to cloudinary to gove apromisres
+async function uploadImages(imageFiles: Express.Multer.File[]) {
+  const uploadPromises = imageFiles.map(async (image) => {
+    const b64 = Buffer.from(image.buffer).toString("base64");
+    // convert to base 64
+    let dataURI = "data: " + image.mimetype + ";base64, " + b64;
+    // upload to cloudinary
+    const res = await cloudinary.v2.uploader.upload(dataURI);
+    // return url of hosted image
+    return res.url;
+  });
 
-//   const imageUrls = await Promise.all(uploadPromises);
-//   return imageUrls;
-// }
+  // wait for all images to be uploaded before rendering them 
+  const imageUrls = await Promise.all(uploadPromises);
+  return imageUrls;
+}
 
 export default router;

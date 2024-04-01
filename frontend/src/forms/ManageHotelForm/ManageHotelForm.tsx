@@ -1,6 +1,6 @@
 import { FormProvider, useForm } from "react-hook-form";
 import DetailsSection from "./DetailsSection";
-import TypeSection from "./TypeSection";
+import BranchSection from "./BranchSection";
 import FacilitiesSection from "./FacilitiesSection";
 import GuestsSection from "./GuestsSection";
 import ImagesSection from "./ImagesSection";
@@ -9,17 +9,14 @@ import { useEffect } from "react";
 
 export type HotelFormData = {
   name: string;
-  city: string;
-  country: string;
   description: string;
-  type: string;
+  branch: string;
   pricePerNight: number;
   starRating: number;
   facilities: string[];
   imageFiles: FileList;
   imageUrls: string[];
-  adultCount: number;
-  childCount: number;
+  guestCount: number;
 };
 
 type Props = {
@@ -42,14 +39,11 @@ const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
       formData.append("hotelId", hotel._id);
     }
     formData.append("name", formDataJson.name);
-    formData.append("city", formDataJson.city);
-    formData.append("country", formDataJson.country);
     formData.append("description", formDataJson.description);
-    formData.append("type", formDataJson.type);
+    formData.append("branch", formDataJson.branch);
     formData.append("pricePerNight", formDataJson.pricePerNight.toString());
     formData.append("starRating", formDataJson.starRating.toString());
-    formData.append("adultCount", formDataJson.adultCount.toString());
-    formData.append("childCount", formDataJson.childCount.toString());
+    formData.append("guestCount", formDataJson.guestCount.toString());
 
     formDataJson.facilities.forEach((facility, index) => {
       formData.append(`facilities[${index}]`, facility);
@@ -72,7 +66,7 @@ const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
     <FormProvider {...formMethods}>
       <form className="flex flex-col gap-10" onSubmit={onSubmit}>
         <DetailsSection />
-        <TypeSection />
+        <BranchSection />
         <FacilitiesSection />
         <GuestsSection />
         <ImagesSection />
