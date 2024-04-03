@@ -42,7 +42,20 @@ router.post(
       const imageFiles = req.files as Express.Multer.File[];
       const newHotel: HotelType = req.body;
 
-      const imageUrls = await uploadImages(imageFiles);
+      const uploadPromises = imageFiles.map(async (image) => {
+        // convert to base 64
+        const b64 = Buffer.from(image.buffer).toString("base64");
+        // create URI
+        let dataURI = "data:" + image.mimetype + ";base64," + b64;
+        // upload to cloudinary
+        const res = await cloudinary.v2.uploader.upload(dataURI);
+        // return url of hosted image
+        return res.url;
+      });
+    
+      // wait for all images to be uploaded before rendering string array
+      const imageUrls = await Promise.all(uploadPromises);
+      // return imageUrls;
 
       newHotel.imageUrls = imageUrls;
       // easier to allow server add this
@@ -56,7 +69,7 @@ router.post(
       // success status
       res.status(201).send(hotel);
     } catch (err) {
-      console.log(Hotel);
+      // console.log(Hotel);
       console.log(`error creating hotel with ${err}`);
       res.status(500).json({ message: "Something went wrong" });
     }
@@ -73,18 +86,18 @@ router.get("/", verifyToken, async (req: Request, res: Response) => {
   }
 });
 
-// router.get("/:id", verifyToken, async (req: Request, res: Response) => {
-//   const id = req.params.id.toString();
-//   try {
-//     const hotel = await Hotel.findOne({
-//       _id: id,
-//       userId: req.userId,
-//     });
-//     res.json(hotel);
-//   } catch (error) {
-//     res.status(500).json({ message: "Error fetching hotels" });
-//   }
-// });
+router.get("/:id", verifyToken, async (req: Request, res: Response) => {
+  const id = req.params.id.toString();
+  try {
+    const hotel = await Hotel.findOne({
+      _id: id,
+      userId: req.userId,
+    });
+    res.json(hotel);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching hotels" });
+  }
+});
 
 // router.put(
 //   "/:hotelId",
@@ -125,21 +138,8 @@ router.get("/", verifyToken, async (req: Request, res: Response) => {
 // );
 
 // upload images to cloudinary to gove apromisres
-async function uploadImages(imageFiles: Express.Multer.File[]) {
-  const uploadPromises = imageFiles.map(async (image) => {
-    // convert to base 64
-    const b64 = Buffer.from(image.buffer).toString("base64");
-    // create URI
-    let dataURI = "data: " + image.mimetype + ";base64, " + b64;
-    // upload to cloudinary
-    const res = await cloudinary.v2.uploader.upload(dataURI);
-    // return url of hosted image
-    return res.url;
-  });
-
-  // wait for all images to be uploaded before rendering string array
-  const imageUrls = await Promise.all(uploadPromises);
-  return imageUrls;
-}
+// async function uploadImages(imageFiles: Express.Multer.File[]) {
+ 
+// }
 
 export default router;

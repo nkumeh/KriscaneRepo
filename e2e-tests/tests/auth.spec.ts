@@ -43,7 +43,7 @@ test("should allow user to register", async ({ page }) => {
 
   await page.getByRole("button", { name: "Create Account" }).click();
 
-  await expect(page.getByText("Registration Successful!")).toBeVisible();
+  await expect(page.getByText("Registration Success!")).toBeVisible();
   await expect(page.getByRole("link", { name: "My Bookings" })).toBeVisible();
   await expect(page.getByRole("link", { name: "My Hotels" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Sign Out" })).toBeVisible();

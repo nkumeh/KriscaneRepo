@@ -4,8 +4,8 @@ import TypeSection from "./TypeSection";
 import FacilitiesSection from "./FacilitiesSection";
 import GuestsSection from "./GuestsSection";
 import ImagesSection from "./ImagesSection";
-import { HotelType } from "../../../../backend/src/shared/types";
-import { useEffect } from "react";
+// import { HotelType } from "../../../../backend/src/shared/types";
+// import { useEffect } from "react";
 
 export type HotelFormData = {
   branchName: string;
@@ -20,24 +20,29 @@ export type HotelFormData = {
 };
 
 type Props = {
-  hotel?: HotelType;
+  // hotel?: HotelType;
   onSave: (hotelFormData: FormData) => void;
   isLoading: boolean;
 };
 
-const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
+const ManageHotelForm = ({onSave, isLoading}: Props) => {
   const formMethods = useForm<HotelFormData>();
-  const { handleSubmit, reset } = formMethods;
+  const { handleSubmit } = formMethods;
 
-  useEffect(() => {
-    reset(hotel);
-  }, [hotel, reset]);
+  // useEffect(() => {
+  //   reset(hotel);
+  // }, [hotel, reset]);
 
   const onSubmit = handleSubmit((formDataJson: HotelFormData) => {
+    // console.log("image url")
+    // console.log(formDataJson.imageUrls)
+
+    console.log(formDataJson);
+
     const formData = new FormData();
-    if (hotel) {
-      formData.append("hotelId", hotel._id);
-    }
+    // if (hotel) {
+    //   formData.append("hotelId", hotel._id);
+    // }
     formData.append("branchName", formDataJson.branchName);
     formData.append("description", formDataJson.description);
     formData.append("type", formDataJson.type);
@@ -49,17 +54,23 @@ const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
       formData.append(`facilities[${index}]`, facility);
     });
 
-    // loading up images seem to be causing an error here... 
+    // // loading up images seem to be causing an error here...
 
-  //   if (formDataJson.imageUrls) {
-  //     formDataJson.imageUrls.forEach((url, index) => {
-  //       formData.append(`imageUrls[${index}]`, url);
-  //     });
-  //   }
+    console.log(formDataJson);
 
-  //   Array.from(formDataJson.imageFiles).forEach((imageFile) => {
-  //     formData.append(`imageFiles`, imageFile);
-  //   });
+    Array.from(formDataJson.imageFiles).forEach((imageFile) => {
+      formData.append(`imageFiles`, imageFile);
+    });
+
+    console.log(formDataJson);
+
+    // if (formDataJson.imageUrls) {
+    //   console.log(formDataJson.imageUrls)
+    //   formDataJson.imageUrls.forEach((url, index) => {
+    //     console.log(index, url)
+    //     formData.append(`imageUrls[${index}]`, url);
+    //   });
+    // }
 
     onSave(formData);
   });
@@ -79,6 +90,7 @@ const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
             className="bg-orange-500 text-white p-2 font-bold hover:bg-orange-300 text-xl disabled:bg-gray-500"
           >
             {isLoading ? "Saving..." : "Save"}
+            {/* Save */}
           </button>
         </span>
       </form>

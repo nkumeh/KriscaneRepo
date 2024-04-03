@@ -1,3 +1,5 @@
+git function: git push -u origin main
+
 BRIEF ABOUT KRISCANE SUITES. 
 
 Started operation fully in September,2010 with staff strength of 22 which cut across Hotel Manager, Marketing Manager, Admin Manager, Duty Manager, House Keepers, Maintenance and the rest. 

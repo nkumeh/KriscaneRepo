@@ -22,7 +22,7 @@ test.beforeEach(async ({ page }) => {
 test("should allow user to add a hotel", async ({ page }) => {
   await page.goto(`${UI_URL}add-hotel`);
 
-  await page.locator('[name="name"]').fill("Test Hotel");
+  await page.locator('[name="branchName"]').fill("Test Hotel");
   await page
     .locator('[name="description"]')
     .fill("This is a description for the Test Hotel");
@@ -37,8 +37,8 @@ test("should allow user to add a hotel", async ({ page }) => {
   await page.locator('[name="guestCount"]').fill("2");
 
   await page.setInputFiles('[name="imageFiles"]', [
-    path.join(__dirname, "files", "1.png"),
-    path.join(__dirname, "files", "2.png"),
+    path.join(__dirname, "files", "1.jpg"),
+    path.join(__dirname, "files", "2.jpg"),
   ]);
 
   await page.getByRole("button", { name: "Save" }).click();
