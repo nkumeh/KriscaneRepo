@@ -20,12 +20,14 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("should allow user to add a hotel", async ({ page }) => {
+  const randomID = Math.floor(Math.random() * 90000) + 10000
+
   await page.goto(`${UI_URL}add-hotel`);
 
-  await page.locator('[name="branchName"]').fill("Test Hotel");
+  await page.locator('[name="branchName"]').fill(`Test Hotel${randomID}`);
   await page
     .locator('[name="description"]')
-    .fill("This is a description for the Test Hotel");
+    .fill(`This is a description for the Test Hotel${randomID}`);
   await page.locator('[name="pricePerNight"]').fill("100");
   await page.selectOption('select[name="starRating"]', "3");
 
