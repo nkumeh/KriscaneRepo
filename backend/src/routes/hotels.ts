@@ -188,15 +188,9 @@ const constructSearchQuery = (queryParams: any) => {
   //   ];
   // }
 
-  if (queryParams.adultCount) {
-    constructedQuery.adultCount = {
-      $gte: parseInt(queryParams.adultCount),
-    };
-  }
-
-  if (queryParams.childCount) {
-    constructedQuery.childCount = {
-      $gte: parseInt(queryParams.childCount),
+  if (queryParams.guestCount) {
+    constructedQuery.guestCount = {
+      $gte: parseInt(queryParams.guestCount),
     };
   }
 

@@ -49,15 +49,17 @@ const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
       formData.append(`facilities[${index}]`, facility);
     });
 
-    if (formDataJson.imageUrls) {
-      formDataJson.imageUrls.forEach((url, index) => {
-        formData.append(`imageUrls[${index}]`, url);
-      });
-    }
+    // loading up images seem to be causing an error here... 
 
-    Array.from(formDataJson.imageFiles).forEach((imageFile) => {
-      formData.append(`imageFiles`, imageFile);
-    });
+  //   if (formDataJson.imageUrls) {
+  //     formDataJson.imageUrls.forEach((url, index) => {
+  //       formData.append(`imageUrls[${index}]`, url);
+  //     });
+  //   }
+
+  //   Array.from(formDataJson.imageFiles).forEach((imageFile) => {
+  //     formData.append(`imageFiles`, imageFile);
+  //   });
 
     onSave(formData);
   });

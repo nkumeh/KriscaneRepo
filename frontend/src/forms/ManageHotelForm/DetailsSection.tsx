@@ -22,12 +22,11 @@ const DetailsSection = () => {
         )}
       </label>
 
-      <div className="flex gap-4">
-      </div>
+      <div className="flex gap-4"></div>
       <label className="text-gray-700 text-sm font-bold flex-1">
         Description
         <textarea
-          rows={10}
+          rows={5}
           className="border rounded w-full py-1 px-2 font-normal"
           {...register("description", { required: "This field is required" })}
         ></textarea>

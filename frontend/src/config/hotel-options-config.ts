@@ -6,7 +6,6 @@ export const hotelTypes = [
   "Family",
   "Romantic",
   "Motel",
-  "All Inclusive",
 ];
 
 export const hotelFacilities = [
@@ -14,4 +13,10 @@ export const hotelFacilities = [
   "Parking",
   "Family Rooms",
   "Non-Smoking Rooms",
+  "Air-Conditioning",
+  "Ironing",
+  "Concierge",
+  "Bar/Lounge",
+  "Restaurant",
+  "Security",
 ];

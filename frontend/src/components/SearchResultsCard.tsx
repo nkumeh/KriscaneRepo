@@ -28,7 +28,7 @@ const SearchResultsCard = ({ hotel }: Props) => {
             to={`/detail/${hotel._id}`}
             className="text-2xl font-bold cursor-pointer"
           >
-            {hotel.name}
+            {hotel.branchName}
           </Link>
         </div>
 

@@ -2,7 +2,7 @@ import { RegisterFormData } from "./pages/Register";
 import { SignInFormData } from "./pages/SignIn";
 import {
   // HotelSearchResponse,
-  HotelType,
+  // HotelType,
   // PaymentIntentResponse,
   UserType,
 } from "../../backend/src/shared/types";

@@ -18,11 +18,12 @@ const upload = multer({
 });
 
 // allows admin user to add new kriscane branch incase of expansion
+// api/my-hotels
 router.post(
   "/",
   verifyToken,
   [
-    // check validity of fields befor api call to db
+    // cuse express to heck validity of fields befor api call to db
     body("branchName").notEmpty().withMessage("Branch name is required"),
     body("description").notEmpty().withMessage("Description is required"),
     body("type").notEmpty().withMessage("Hotel type is required"),
@@ -35,7 +36,7 @@ router.post(
       .isArray()
       .withMessage("Facilities are required"),
   ],
-  upload.array("imageFiles", 6),
+  upload.array("imageFiles", 10),
   async (req: Request, res: Response) => {
     try {
       const imageFiles = req.files as Express.Multer.File[];
@@ -44,6 +45,7 @@ router.post(
       const imageUrls = await uploadImages(imageFiles);
 
       newHotel.imageUrls = imageUrls;
+      // easier to allow server add this
       newHotel.lastUpdated = new Date();
       newHotel.userId = req.userId;
 
@@ -54,7 +56,8 @@ router.post(
       // success status
       res.status(201).send(hotel);
     } catch (err) {
-      console.log(err);
+      console.log(Hotel);
+      console.log(`error creating hotel with ${err}`);
       res.status(500).json({ message: "Something went wrong" });
     }
   }
@@ -70,18 +73,18 @@ router.get("/", verifyToken, async (req: Request, res: Response) => {
   }
 });
 
-router.get("/:id", verifyToken, async (req: Request, res: Response) => {
-  const id = req.params.id.toString();
-  try {
-    const hotel = await Hotel.findOne({
-      _id: id,
-      userId: req.userId,
-    });
-    res.json(hotel);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching hotels" });
-  }
-});
+// router.get("/:id", verifyToken, async (req: Request, res: Response) => {
+//   const id = req.params.id.toString();
+//   try {
+//     const hotel = await Hotel.findOne({
+//       _id: id,
+//       userId: req.userId,
+//     });
+//     res.json(hotel);
+//   } catch (error) {
+//     res.status(500).json({ message: "Error fetching hotels" });
+//   }
+// });
 
 // router.put(
 //   "/:hotelId",
@@ -124,8 +127,9 @@ router.get("/:id", verifyToken, async (req: Request, res: Response) => {
 // upload images to cloudinary to gove apromisres
 async function uploadImages(imageFiles: Express.Multer.File[]) {
   const uploadPromises = imageFiles.map(async (image) => {
-    const b64 = Buffer.from(image.buffer).toString("base64");
     // convert to base 64
+    const b64 = Buffer.from(image.buffer).toString("base64");
+    // create URI
     let dataURI = "data: " + image.mimetype + ";base64, " + b64;
     // upload to cloudinary
     const res = await cloudinary.v2.uploader.upload(dataURI);
@@ -133,7 +137,7 @@ async function uploadImages(imageFiles: Express.Multer.File[]) {
     return res.url;
   });
 
-  // wait for all images to be uploaded before rendering them 
+  // wait for all images to be uploaded before rendering string array
   const imageUrls = await Promise.all(uploadPromises);
   return imageUrls;
 }

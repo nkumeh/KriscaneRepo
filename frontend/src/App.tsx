@@ -80,7 +80,6 @@ const App = () => {
               path="/add-hotel"
               element={
                 <Layout>
-                  Fav Hotels
                   <AddHotel />
                 </Layout>
               }

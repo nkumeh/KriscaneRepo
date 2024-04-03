@@ -3,8 +3,7 @@ import { HotelType } from "../../../backend/src/shared/types";
 type Props = {
   checkIn: Date;
   checkOut: Date;
-  adultCount: number;
-  childCount: number;
+  guestCount: number;
   numberOfNights: number;
   hotel: HotelType;
 };
@@ -12,8 +11,7 @@ type Props = {
 const BookingDetailsSummary = ({
   checkIn,
   checkOut,
-  adultCount,
-  childCount,
+  guestCount,
   numberOfNights,
   hotel,
 }: Props) => {
@@ -22,7 +20,7 @@ const BookingDetailsSummary = ({
       <h2 className="text-xl font-bold">Your Booking Details</h2>
       <div className="border-b py-2">
         Location:
-        <div className="font-bold">{`${hotel.name}, ${hotel.type}`}</div>
+        <div className="font-bold">{`${hotel.branchName}, ${hotel.type}`}</div>
       </div>
       <div className="flex justify-between">
         <div>
@@ -42,7 +40,7 @@ const BookingDetailsSummary = ({
       <div>
         Guests{" "}
         <div className="font-bold">
-          {adultCount} adults & {childCount} children
+          {guestCount} guests
         </div>
       </div>
     </div>
