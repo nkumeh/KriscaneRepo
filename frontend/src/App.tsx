@@ -11,7 +11,7 @@ import { useAppContext } from "./contexts/AppContext";
 import AddHotel from "./pages/AddHotel";
 import MyHotels from "./pages/MyHotels";
 import EditHotel from "./pages/EditHotel";
-// import Search from "./pages/Search";
+import Search from "./pages/Search";
 // import Detail from "./pages/Detail";
 // import Booking from "./pages/Booking";
 // import MyBookings from "./pages/MyBookings";
@@ -35,8 +35,7 @@ const App = () => {
           path="/search"
           element={
             <Layout>
-              Searching and Hoping
-              {/* <Search /> */}
+              <Search />
             </Layout>
           }
         />

@@ -4,15 +4,13 @@ type SearchContext = {
   destination: string;
   checkIn: Date;
   checkOut: Date;
-  adultCount: number;
-  childCount: number;
+  guestCount: number;
   hotelId: string;
   saveSearchValues: (
     destination: string,
     checkIn: Date,
     checkOut: Date,
-    adultCount: number,
-    childCount: number
+    guestCount: number
   ) => void;
 };
 
@@ -36,11 +34,8 @@ export const SearchContextProvider = ({
     () =>
       new Date(sessionStorage.getItem("checkOut") || new Date().toISOString())
   );
-  const [adultCount, setAdultCount] = useState<number>(() =>
-    parseInt(sessionStorage.getItem("adultCount") || "1")
-  );
-  const [childCount, setChildCount] = useState<number>(() =>
-    parseInt(sessionStorage.getItem("childCount") || "1")
+  const [guestCount, setGuestCount] = useState<number>(() =>
+    parseInt(sessionStorage.getItem("guestCount") || "1")
   );
   const [hotelId, setHotelId] = useState<string>(
     () => sessionStorage.getItem("hotelID") || ""
@@ -50,15 +45,13 @@ export const SearchContextProvider = ({
     destination: string,
     checkIn: Date,
     checkOut: Date,
-    adultCount: number,
-    childCount: number,
+    guestCount: number,
     hotelId?: string
   ) => {
     setDestination(destination);
     setCheckIn(checkIn);
     setCheckOut(checkOut);
-    setAdultCount(adultCount);
-    setChildCount(childCount);
+    setGuestCount(guestCount);
     if (hotelId) {
       setHotelId(hotelId);
     }
@@ -66,8 +59,7 @@ export const SearchContextProvider = ({
     sessionStorage.setItem("destination", destination);
     sessionStorage.setItem("checkIn", checkIn.toISOString());
     sessionStorage.setItem("checkOut", checkOut.toISOString());
-    sessionStorage.setItem("adultCount", adultCount.toString());
-    sessionStorage.setItem("childCount", childCount.toString());
+    sessionStorage.setItem("guestCount", guestCount.toString());
 
     if (hotelId) {
       sessionStorage.setItem("hotelId", hotelId);
@@ -80,8 +72,7 @@ export const SearchContextProvider = ({
         destination,
         checkIn,
         checkOut,
-        adultCount,
-        childCount,
+        guestCount,
         hotelId,
         saveSearchValues,
       }}

@@ -28,10 +28,11 @@ router.get("/search", async (req: Request, res: Response) => {
         break;
     }
 
-    const pageSize = 5;
+    const pageSize = 3;
     const pageNumber = parseInt(
       req.query.page ? req.query.page.toString() : "1"
     );
+    // helps with ordering of hotels per page
     const skip = (pageNumber - 1) * pageSize;
 
     const hotels = await Hotel.find(query)
