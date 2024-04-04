@@ -47,22 +47,21 @@ test("should allow user to add a hotel", async ({ page }) => {
   await expect(page.getByText("Hotel Saved!")).toBeVisible();
 });
 
-// test("should display hotels", async ({ page }) => {
-//   await page.goto(`${UI_URL}my-hotels`);
+test("should display hotels", async ({ page }) => {
+  await page.goto(`${UI_URL}my-hotels`);
 
-//   await expect(page.getByText("Kriscane Annex")).toBeVisible();
-//   await expect(page.getByText("kkkkkkkkkk")).toBeVisible();
-  
-//   await expect(page.getByText("All Inclusive")).toBeVisible();
-//   await expect(page.getByText("NGN 20000 per night")).toBeVisible();
-//   await expect(page.getByText("2 guests")).toBeVisible();
-//   await expect(page.getByText("4 Star Rating")).toBeVisible();
+  await expect(page.getByText("Kriscane Annex")).toBeVisible();
+  await expect(page.getByText("kkkkkkkkkk")).toBeVisible();
+  await expect(page.getByText("Luxury")).toBeVisible();
+  await expect(page.getByText("NGN40000 per night")).toBeVisible();
+  await expect(page.getByText("3 guests")).toBeVisible();
+  await expect(page.getByText("4 Star Rating")).toBeVisible();
 
-//   await expect(
-//     page.getByRole("link", { name: "View Details" }).first()
-//   ).toBeVisible();
-//   await expect(page.getByRole("link", { name: "Add Hotel" })).toBeVisible();
-// });
+  await expect(
+    page.getByRole("link", { name: "View Details" }).first()
+  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Add Hotel" })).toBeVisible();
+});
 
 // test("should edit hotel", async ({ page }) => {
 //   await page.goto(`${UI_URL}my-hotels`);

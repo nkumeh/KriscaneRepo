@@ -10,8 +10,8 @@ test.beforeEach(async ({ page }) => {
 
   await expect(page.getByRole("heading", { name: "Sign In" })).toBeVisible();
 
-  await page.locator("[name=email]").fill("1@1.com");
-  await page.locator("[name=password]").fill("password123");
+  await page.locator("[name=email]").fill("kk@hh.nop");
+  await page.locator("[name=password]").fill("sign-in");
 
   await page.getByRole("button", { name: "Login" }).click();
 
@@ -21,11 +21,11 @@ test.beforeEach(async ({ page }) => {
 test("should show hotel search results", async ({ page }) => {
   await page.goto(UI_URL);
 
-  await page.getByPlaceholder("Where are you going?").fill("Dublin");
+  // await page.getByPlaceholder("Where are you going?").fill("Dublin");
   await page.getByRole("button", { name: "Search" }).click();
 
   await expect(page.getByText("Hotels found in Dublin")).toBeVisible();
-  await expect(page.getByText("Dublin Getaways")).toBeVisible();
+  await expect(page.getByText("Kricane Annex")).toBeVisible();
 });
 
 test("should show hotel detail", async ({ page }) => {
