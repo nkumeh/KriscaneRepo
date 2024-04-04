@@ -4,8 +4,8 @@ import TypeSection from "./TypeSection";
 import FacilitiesSection from "./FacilitiesSection";
 import GuestsSection from "./GuestsSection";
 import ImagesSection from "./ImagesSection";
-// import { HotelType } from "../../../../backend/src/shared/types";
-// import { useEffect } from "react";
+import { HotelType } from "../../../../backend/src/shared/types";
+import { useEffect } from "react";
 
 export type HotelFormData = {
   branchName: string;
@@ -20,18 +20,18 @@ export type HotelFormData = {
 };
 
 type Props = {
-  // hotel?: HotelType;
+  hotel?: HotelType;
   onSave: (hotelFormData: FormData) => void;
   isLoading: boolean;
 };
 
-const ManageHotelForm = ({onSave, isLoading}: Props) => {
+const ManageHotelForm = ({onSave, isLoading, hotel}: Props) => {
   const formMethods = useForm<HotelFormData>();
-  const { handleSubmit } = formMethods;
+  const { handleSubmit, reset } = formMethods;
 
-  // useEffect(() => {
-  //   reset(hotel);
-  // }, [hotel, reset]);
+  useEffect(() => {
+    reset(hotel);
+  }, [hotel, reset]);
 
   const onSubmit = handleSubmit((formDataJson: HotelFormData) => {
     // console.log("image url")
@@ -40,9 +40,9 @@ const ManageHotelForm = ({onSave, isLoading}: Props) => {
     console.log(formDataJson);
 
     const formData = new FormData();
-    // if (hotel) {
-    //   formData.append("hotelId", hotel._id);
-    // }
+    if (hotel) {
+      formData.append("hotelId", hotel._id);
+    }
     formData.append("branchName", formDataJson.branchName);
     formData.append("description", formDataJson.description);
     formData.append("type", formDataJson.type);
@@ -54,23 +54,19 @@ const ManageHotelForm = ({onSave, isLoading}: Props) => {
       formData.append(`facilities[${index}]`, facility);
     });
 
-    // // loading up images seem to be causing an error here...
+     if (formDataJson.imageUrls) {
 
-    console.log(formDataJson);
+      formDataJson.imageUrls.forEach((url, index) => {
+        console.log(index, url)
+        formData.append(`imageUrls[${index}]`, url);
+      });
+    }
 
     Array.from(formDataJson.imageFiles).forEach((imageFile) => {
       formData.append(`imageFiles`, imageFile);
     });
 
-    console.log(formDataJson);
-
-    // if (formDataJson.imageUrls) {
-    //   console.log(formDataJson.imageUrls)
-    //   formDataJson.imageUrls.forEach((url, index) => {
-    //     console.log(index, url)
-    //     formData.append(`imageUrls[${index}]`, url);
-    //   });
-    // }
+    // console.log(formDataJson);
 
     onSave(formData);
   });

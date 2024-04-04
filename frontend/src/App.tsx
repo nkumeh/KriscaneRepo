@@ -10,7 +10,7 @@ import SignIn from "./pages/SignIn";
 import { useAppContext } from "./contexts/AppContext";
 import AddHotel from "./pages/AddHotel";
 import MyHotels from "./pages/MyHotels";
-// import EditHotel from "./pages/EditHotel";
+import EditHotel from "./pages/EditHotel";
 // import Search from "./pages/Search";
 // import Detail from "./pages/Detail";
 // import Booking from "./pages/Booking";
@@ -88,8 +88,7 @@ const App = () => {
               path="/edit-hotel/:hotelId"
               element={
                 <Layout>
-                  Edit Hotel
-                  {/* <EditHotel /> */}
+                  <EditHotel />
                 </Layout>
               }
             />
