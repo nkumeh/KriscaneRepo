@@ -1,5 +1,10 @@
 git function: git push -u origin main
 
+
+This is a website for kriscane Suites
+Please bear with us while were still under construction!
+
+
 BRIEF ABOUT KRISCANE SUITES. 
 
 Started operation fully in September,2010 with staff strength of 22 which cut across Hotel Manager, Marketing Manager, Admin Manager, Duty Manager, House Keepers, Maintenance and the rest. 
