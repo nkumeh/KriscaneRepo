@@ -68,6 +68,7 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
+// api/hotels/999099090
 router.get(
   "/:id",
   [param("id").notEmpty().withMessage("Hotel ID is required")],
@@ -77,6 +78,7 @@ router.get(
       return res.status(400).json({ errors: errors.array() });
     }
 
+    // we confidently have a hotel id
     const id = req.params.id.toString();
 
     try {

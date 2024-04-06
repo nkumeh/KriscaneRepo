@@ -187,7 +187,6 @@ export const fetchHotelById = async (hotelId: string): Promise<HotelType> => {
   if (!response.ok) {
     throw new Error("Error fetching Hotels");
   }
-
   return response.json();
 };
 
