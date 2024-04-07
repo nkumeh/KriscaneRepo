@@ -2,6 +2,8 @@ import express, { Request, Response } from "express";
 import Hotel from "../models/hotel";
 import { BookingType, HotelSearchResponse } from "../shared/types";
 import { param, validationResult } from "express-validator";
+// Paystack doesn't offer an official Node.js library, so direct API calls are common.
+// import axios from "axios";
 import verifyToken from "../middleware/auth";
 
 const paystack = require('paystack')(process.env.PAYSTACK_API_KEY as string);
@@ -92,23 +94,24 @@ router.post(
   "/:hotelId/bookings/transaction-intent",
   verifyToken,
   async (req: Request, res: Response) => {
-    const { numberOfNights } = req.body;
+    const { numberOfNights, userEmail } = req.body;
     const hotelId = req.params.hotelId;
-
     const hotel = await Hotel.findById(hotelId);
+
     if (!hotel) {
       return res.status(400).json({ message: "Hotel not found" });
     }
 
     // call from the backend for security
     const totalCost = hotel.pricePerNight * numberOfNights;
+    // const callbackUrl?
 
     try{
       // Create a Paystack transaction
       const transaction = await paystack.transaction.initialize({
       amount: totalCost * 100, // Convert to kobo, paystack base unit
       currency: "NGN",
-      // email: req.params.email, // Assuming you have the user's email
+      email: req.params.email, // Assuming you have the user's email
       metadata: {
         hotelId,
         userId: req.userId,
