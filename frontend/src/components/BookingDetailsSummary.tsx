@@ -5,10 +5,11 @@ type Props = {
   checkOut: Date;
   guestCount: number;
   numberOfNights: number;
-  hotel: HotelType;
+  hotel: HotelType; // import hotel type
 };
 
 const BookingDetailsSummary = ({
+  // destructure props
   checkIn,
   checkOut,
   guestCount,

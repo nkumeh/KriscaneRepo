@@ -2,12 +2,9 @@ import express, { Request, Response } from "express";
 import Hotel from "../models/hotel";
 import { BookingType, HotelSearchResponse } from "../shared/types";
 import { param, validationResult } from "express-validator";
-// import Stripe from "stripe";
 import verifyToken from "../middleware/auth";
 
-// 
-
-// const stripe = new Stripe(process.env.STRIPE_API_KEY as string);
+const paystack = require('paystack')(process.env.PAYSTACK_API_KEY as string);
 
 const router = express.Router();
 
@@ -91,105 +88,107 @@ router.get(
   }
 );
 
-// router.post(
-//   "/:hotelId/bookings/payment-intent",
-//   verifyToken,
-//   async (req: Request, res: Response) => {
-//     const { numberOfNights } = req.body;
-//     const hotelId = req.params.hotelId;
+router.post(
+  "/:hotelId/bookings/transaction-intent",
+  verifyToken,
+  async (req: Request, res: Response) => {
+    const { numberOfNights } = req.body;
+    const hotelId = req.params.hotelId;
 
-//     const hotel = await Hotel.findById(hotelId);
-//     if (!hotel) {
-//       return res.status(400).json({ message: "Hotel not found" });
-//     }
+    const hotel = await Hotel.findById(hotelId);
+    if (!hotel) {
+      return res.status(400).json({ message: "Hotel not found" });
+    }
 
-//     const totalCost = hotel.pricePerNight * numberOfNights;
+    // call from the backend for security
+    const totalCost = hotel.pricePerNight * numberOfNights;
 
-//     const paymentIntent = await stripe.paymentIntents.create({
-//       amount: totalCost * 100,
-//       currency: "gbp",
-//       metadata: {
-//         hotelId,
-//         userId: req.userId,
-//       },
-//     });
+    try{
+      // Create a Paystack transaction
+      const transaction = await paystack.transaction.initialize({
+      amount: totalCost * 100, // Convert to kobo, paystack base unit
+      currency: "NGN",
+      // email: req.params.email, // Assuming you have the user's email
+      metadata: {
+        hotelId,
+        userId: req.userId,
+        },
+      });
 
-//     if (!paymentIntent.client_secret) {
-//       return res.status(500).json({ message: "Error creating payment intent" });
-//     }
+      // if client secret doesnt exist/ paystack network issues
+      if (!transaction.data.authorization_url) {
+        return res.status(500).json({ message: "Error creating payment intent" });
+      }
 
-//     const response = {
-//       paymentIntentId: paymentIntent.id,
-//       clientSecret: paymentIntent.client_secret.toString(),
-//       totalCost,
-//     };
+      const response = {
+        aunthorizationId: transaction.id,
+        authorizationUrl: transaction.data.authorization_url,
+        totalCost,
+      };
 
-//     res.send(response);
-//   }
-// );
+      res.send(response);
 
-// router.post(
-//   "/:hotelId/bookings",
-//   verifyToken,
-//   async (req: Request, res: Response) => {
-//     try {
-//       const paymentIntentId = req.body.paymentIntentId;
+    } catch(err){
+      console.error(err);
+      res.status(500).json({ message: 'Error creating transaction' })
+    }
+  });
 
-//       const paymentIntent = await stripe.paymentIntents.retrieve(
-//         paymentIntentId as string
-//       );
+router.post(
+  "/:hotelId/bookings",
+  verifyToken,
+  async (req: Request, res: Response) => {
+    try {
+      const authId = req.body.authorizationId;
 
-//       if (!paymentIntent) {
-//         return res.status(400).json({ message: "payment intent not found" });
-//       }
+      const transaction = await paystack.transaction.verify(authId);
 
-//       if (
-//         paymentIntent.metadata.hotelId !== req.params.hotelId ||
-//         paymentIntent.metadata.userId !== req.userId
-//       ) {
-//         return res.status(400).json({ message: "payment intent mismatch" });
-//       }
+      if (!transaction || transaction.status !== 'success') {
+        return res.status(400).json({
+          message: `Payment not successful. Status: ${transaction.status || 'not found'}`,
+        });
+      }
 
-//       if (paymentIntent.status !== "succeeded") {
-//         return res.status(400).json({
-//           message: `payment intent not succeeded. Status: ${paymentIntent.status}`,
-//         });
-//       }
+      if (
+        transaction.metadata.hotelId !== req.params.hotelId ||
+        transaction.metadata.userId !== req.userId
+      ) {
+        return res.status(400).json({ message: "Payment details mismatch" });
+      }
 
-//       const newBooking: BookingType = {
-//         ...req.body,
-//         userId: req.userId,
-//       };
+      const newBooking: BookingType = {
+        ...req.body,
+        userId: req.userId,
+      };
 
-//       const hotel = await Hotel.findOneAndUpdate(
-//         { _id: req.params.hotelId },
-//         {
-//           $push: { bookings: newBooking },
-//         }
-//       );
+      const hotel = await Hotel.findOneAndUpdate(
+        { _id: req.params.hotelId },
+        {
+          $push: { bookings: newBooking },
+        }
+      );
 
-//       if (!hotel) {
-//         return res.status(400).json({ message: "hotel not found" });
-//       }
+      if (!hotel) {
+        return res.status(400).json({ message: "hotel not found" });
+      }
 
-//       await hotel.save();
-//       res.status(200).send();
-//     } catch (error) {
-//       console.log(error);
-//       res.status(500).json({ message: "something went wrong" });
-//     }
-//   }
-// );
+      await hotel.save();
+      res.status(200).send();
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "something went wrong" });
+    }
+  }
+);
 
 const constructSearchQuery = (queryParams: any) => {
   let constructedQuery: any = {};
 
-  // if (queryParams.destination) {
-  //   constructedQuery.$or = [
-  //     { city: new RegExp(queryParams.destination, "i") },
-  //     { country: new RegExp(queryParams.destination, "i") },
-  //   ];
-  // }
+  if (queryParams.destination) {
+    constructedQuery.$or = [
+      { branchName: new RegExp(queryParams.branchName, "i") },
+    ];
+  }
 
   if (queryParams.guestCount) {
     constructedQuery.guestCount = {

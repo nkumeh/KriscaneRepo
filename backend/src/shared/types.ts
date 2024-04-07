@@ -42,8 +42,8 @@ export type HotelSearchResponse = {
   };
 };
 
-export type PaymentIntentResponse = {
-  paymentIntentId: string;
-  clientSecret: string;
+export type TransactionResponse = {
+  authorizationId: string;
+  authorizationUrl: string;
   totalCost: number;
 };

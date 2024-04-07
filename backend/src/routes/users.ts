@@ -6,10 +6,13 @@ import verifyToken from "../middleware/auth";
 
 const router = express.Router();
 
+// get the current logged in user, verufy token is from auth middelware
+// making it slash me is a security optimisation to hide user id that will be verifies by auth middle ware
 router.get("/me", verifyToken, async (req: Request, res: Response) => {
   const userId = req.userId;
 
   try {
+    //  this is actually excluding the password field from being visible
     const user = await User.findById(userId).select("-password");
     if (!user) {
       return res.status(400).json({ message: "User not found" });

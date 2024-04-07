@@ -23,7 +23,10 @@ type SearchContextProviderProps = {
 export const SearchContextProvider = ({
   children,
 }: SearchContextProviderProps) => {
+  // initialise state variables from session storage, only works on current tab
+  // good cuz no stale data
   const [destination, setDestination] = useState<string>(
+    // storing search information for refreshes
     () => sessionStorage.getItem("destination") || ""
   );
   const [checkIn, setCheckIn] = useState<Date>(
@@ -41,6 +44,7 @@ export const SearchContextProvider = ({
     () => sessionStorage.getItem("hotelID") || ""
   );
 
+  // saving things ins session storge needs to be a string saves in local state
   const saveSearchValues = (
     destination: string,
     checkIn: Date,
