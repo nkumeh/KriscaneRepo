@@ -56,9 +56,10 @@ const BookingForm = ({
     {
       onSuccess: (data) => {
         // Redirect to Paystack payment page
-        // window.location.href = transactionIntent.authorizationUrl;
+        // window.location.href = data.authorizationUrl;
         console.log('Redirecting to:', data.transactionId);
         window.location.href = data.transactionId;
+        console.log(data);
         showToast({ message: "Booking Saved! Redirecting to payment...", type: "SUCCESS" });
         
       },

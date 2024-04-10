@@ -154,8 +154,8 @@ router.post(
   "/:hotelId/bookings",
   verifyToken,
   async (req: Request, res: Response) => {
-    // const { hotelId } = req.params;
-    // const email = req.body;
+    const { hotelId } = req.params;
+    const email = req.body;
 
     try {
       const { transactionReference, email } = req.body;
@@ -177,7 +177,7 @@ router.post(
 
       const newBooking: BookingType = {
         ...req.body,
-        // email: email,
+        email: email,
         userId: req.userId,
       };
 

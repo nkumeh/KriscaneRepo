@@ -215,7 +215,7 @@ export const createTransactionIntent = async (
   return response.json();
 };
 
-export const createRoomBooking = async (formData: BookingFormData) => {
+export const createRootmBooking = async (formData: BookingFormData) => {
   const response = await fetch(
     `${API_BASE_URL}/api/hotels/${formData.hotelId}/bookings`,
     {
@@ -229,6 +229,7 @@ export const createRoomBooking = async (formData: BookingFormData) => {
   );
 
   if (!response.ok) {
+    // console.log('formData', formData);
     throw new Error("Error booking room");
   }
 
