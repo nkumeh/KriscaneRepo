@@ -8,7 +8,7 @@ const bookingSchema = new mongoose.Schema<BookingType>({
   guestCount: { type: Number, required: true },
   checkIn: { type: Date, required: true },
   checkOut: { type: Date, required: true },
-  userId: { type: String, required: true },
+  userId: { type: String, required: true }, // perhaps this unrequires for guest checkout
   totalCost: { type: Number, required: true },
 });
 

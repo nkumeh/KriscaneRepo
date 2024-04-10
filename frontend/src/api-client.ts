@@ -152,8 +152,8 @@ export const searchHotels = async (
   queryParams.append("checkIn", searchParams.checkIn || "");
   queryParams.append("checkOut", searchParams.checkOut || "");
   queryParams.append("guestCount", searchParams.guestCount || "");
-  queryParams.append("page", searchParams.page || "");
 
+  queryParams.append("page", searchParams.page || "");
   queryParams.append("maxPrice", searchParams.maxPrice || "");
   queryParams.append("sortOption", searchParams.sortOption || "");
 
@@ -193,14 +193,15 @@ export const fetchHotelById = async (hotelId: string): Promise<HotelType> => {
 
 export const createTransactionIntent = async (
   hotelId: string,
-  numberOfNights: string
+  numberOfNights: string,
+  email: string,
 ): Promise<TransactionResponse> => {
   const response = await fetch(
     `${API_BASE_URL}/api/hotels/${hotelId}/bookings/transaction-intent`,
     {
       credentials: "include",
       method: "POST",
-      body: JSON.stringify({ numberOfNights }),
+      body: JSON.stringify({ numberOfNights, email }),
       headers: {
         "Content-Type": "application/json",
       },
@@ -230,6 +231,8 @@ export const createRoomBooking = async (formData: BookingFormData) => {
   if (!response.ok) {
     throw new Error("Error booking room");
   }
+
+  return response.json();
 };
 
 export const fetchMyBookings = async (): Promise<HotelType[]> => {

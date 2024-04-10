@@ -1,12 +1,10 @@
 import express, { Request, Response } from "express";
 import Hotel from "../models/hotel";
 import { BookingType, HotelSearchResponse } from "../shared/types";
-import { param, validationResult } from "express-validator";
+import { param, validationResult, body } from "express-validator";
 // Paystack doesn't offer an official Node.js library, so direct API calls are common.
-// import axios from "axios";
+import axios from "axios";
 import verifyToken from "../middleware/auth";
-
-const paystack = require('paystack')(process.env.PAYSTACK_API_KEY as string);
 
 const router = express.Router();
 
@@ -94,7 +92,8 @@ router.post(
   "/:hotelId/bookings/transaction-intent",
   verifyToken,
   async (req: Request, res: Response) => {
-    const { numberOfNights, userEmail } = req.body;
+    const { numberOfNights, email } = req.body;
+
     const hotelId = req.params.hotelId;
     const hotel = await Hotel.findById(hotelId);
 
@@ -102,65 +101,83 @@ router.post(
       return res.status(400).json({ message: "Hotel not found" });
     }
 
+    if (!email) {
+      return res.status(400).json({ message: "Email required" });
+    }
+
     // call from the backend for security
     const totalCost = hotel.pricePerNight * numberOfNights;
-    // const callbackUrl?
 
-    try{
+    try {
       // Create a Paystack transaction
-      const transaction = await paystack.transaction.initialize({
-      amount: totalCost * 100, // Convert to kobo, paystack base unit
-      currency: "NGN",
-      email: req.params.email, // Assuming you have the user's email
-      metadata: {
-        hotelId,
-        userId: req.userId,
+      const paystackResponse = await axios.post(
+        `${process.env.PAYSTACK_BASE_URL}/transaction/initialize`,
+        {
+          email: email, // Customer's email address
+          amount: totalCost * 100, // Amount in kobo
+          currency: "NGN", // Adjust the currency as needed
+          metadata: {
+            hotelId,
+            userId: req.userId, // Make sure this is being correctly set in your request
+          },
         },
-      });
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.PAYSTACK_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      // if client secret doesnt exist/ paystack network issues
-      if (!transaction.data.authorization_url) {
-        return res.status(500).json({ message: "Error creating payment intent" });
+      if (paystackResponse.data.status !== true) {
+        return res
+          .status(500)
+          .json({ message: "Error initializing Paystack transaction" });
       }
 
-      const response = {
-        aunthorizationId: transaction.id,
-        authorizationUrl: transaction.data.authorization_url,
+      // Sending back Paystack response details needed for payment completion
+      res.json({
+        authorizationUrl: paystackResponse.data.data.authorization_url,
+        accessCode: paystackResponse.data.data.access_code,
+        reference: paystackResponse.data.data.reference, // You'll need this for verifying the transaction later
         totalCost,
-      };
+      });
 
-      res.send(response);
-
-    } catch(err){
+    } catch (err) {
       console.error(err);
-      res.status(500).json({ message: 'Error creating transaction' })
+      res.status(500).json({ message: "Error creating transaction" });
     }
   });
+
 
 router.post(
   "/:hotelId/bookings",
   verifyToken,
   async (req: Request, res: Response) => {
+    // const { hotelId } = req.params;
+    // const email = req.body;
+
     try {
-      const authId = req.body.authorizationId;
+      const { transactionReference, email } = req.body;
 
-      const transaction = await paystack.transaction.verify(authId);
+      const verificationUrl = `https://api.paystack.co/transaction/verify/${encodeURIComponent(transactionReference)}`;
 
-      if (!transaction || transaction.status !== 'success') {
+      // Verify the transaction with Paystack
+      const verificationResponse = await axios.get(verificationUrl, {
+        headers: {
+          Authorization: `Bearer ${process.env.PAYSTACK_API_KEY}`,
+        },
+      });
+      
+      if (verificationResponse.data.data.status !== "success") {
         return res.status(400).json({
-          message: `Payment not successful. Status: ${transaction.status || 'not found'}`,
+          message: `Payment not successful. Status: ${verificationResponse.data.data.status}`,
         });
-      }
-
-      if (
-        transaction.metadata.hotelId !== req.params.hotelId ||
-        transaction.metadata.userId !== req.userId
-      ) {
-        return res.status(400).json({ message: "Payment details mismatch" });
       }
 
       const newBooking: BookingType = {
         ...req.body,
+        // email: email,
         userId: req.userId,
       };
 
@@ -168,21 +185,22 @@ router.post(
         { _id: req.params.hotelId },
         {
           $push: { bookings: newBooking },
-        }
+        },
+        { new: true } // return updated document
       );
 
       if (!hotel) {
-        return res.status(400).json({ message: "hotel not found" });
+        return res.status(400).json({ message: "Hotel not found" });
       }
 
       await hotel.save();
-      res.status(200).send();
+      res.status(200).json({ message: "Booking successful", booking: newBooking });
     } catch (error) {
-      console.log(error);
+      console.log("Error verifying payment or creating booking:", error);
       res.status(500).json({ message: "something went wrong" });
     }
-  }
-);
+  });
+
 
 const constructSearchQuery = (queryParams: any) => {
   let constructedQuery: any = {};

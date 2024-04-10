@@ -43,7 +43,8 @@ export type HotelSearchResponse = {
 };
 
 export type TransactionResponse = {
-  authorizationId: string;
   authorizationUrl: string;
+  accessCode: string;
+  reference: string;
   totalCost: number;
 };
