@@ -4,7 +4,7 @@ import {
   UserType,
 } from "../../../../backend/src/shared/types";
 import { useSearchContext } from "../../contexts/SearchContext";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useMutation } from "react-query";
 import * as apiClient from "../../api-client";
 import { useAppContext } from "../../contexts/AppContext";
@@ -26,6 +26,8 @@ export type BookingFormData = {
   transactionId: string;
   transactionReference: string;
 };
+
+const navigate = useNavigate();
 
 const BookingForm = ({
   currentUser,
@@ -60,6 +62,7 @@ const BookingForm = ({
         console.log('Redirecting to:', data.transactionId);
         // window.location.href = data.transactionId;
         console.log(data);
+        // navigate("/search");
         // showToast({ message: "Booking Saved! Redirecting to payment...", type: "SUCCESS" });
       },
       onError: () => {
