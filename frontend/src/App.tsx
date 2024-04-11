@@ -14,9 +14,11 @@ import EditHotel from "./pages/EditHotel";
 import Search from "./pages/Search";
 import Detail from "./pages/Detail";
 import Booking from "./pages/Booking";
-// import MyBookings from "./pages/MyBookings";
-// import Home from "./pages/Home";
+import MyBookings from "./pages/MyBookings";
+import Home from "./pages/Home";
 
+
+// layout imported here with react children props
 const App = () => {
   const { isLoggedIn } = useAppContext();
   return (
@@ -26,8 +28,7 @@ const App = () => {
           path="/"
           element={
             <Layout>
-              Home is where comfort is...
-              {/* <Home /> */}
+              <Home />
             </Layout>
           }
         />
@@ -103,8 +104,7 @@ const App = () => {
               path="/my-bookings"
               element={
                 <Layout>
-                  Booking forever
-                  {/* <MyBookings /> */}
+                  <MyBookings />
                 </Layout>
               }
             />

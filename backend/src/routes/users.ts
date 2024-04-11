@@ -7,7 +7,7 @@ import verifyToken from "../middleware/auth";
 const router = express.Router();
 
 // get the current logged in user, verufy token is from auth middelware
-// making it slash me is a security optimisation to hide user id that will be verifies by auth middle ware
+// making it /me is a security optimisation to hide user id that will be verifies by auth middle ware
 router.get("/me", verifyToken, async (req: Request, res: Response) => {
   const userId = req.userId;
 
@@ -36,6 +36,7 @@ router.post(
   ],
   async (req: Request, res: Response) => {
     const errors = validationResult(req);
+    
     if (!errors.isEmpty()) {
       return res.status(400).json({ message: errors.array() });
     }
@@ -63,8 +64,9 @@ router.post(
       res.cookie("auth_token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        maxAge: 86400000,
+        maxAge: 86400000, // in millisecs
       });
+
       return res.status(200).send({ message: "User registered OK" });
     } catch (error) {
       console.log(error);

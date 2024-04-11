@@ -7,6 +7,7 @@ interface Props {
   children: React.ReactNode;
 }
 
+// destructuring react node components as children parameters of props for layout component
 const Layout = ({ children }: Props) => {
   return (
     <div className="flex flex-col min-h-screen">

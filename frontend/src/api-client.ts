@@ -215,7 +215,7 @@ export const createTransactionIntent = async (
   return response.json();
 };
 
-export const createRootmBooking = async (formData: BookingFormData) => {
+export const createRoomBooking = async (formData: BookingFormData) => {
   const response = await fetch(
     `${API_BASE_URL}/api/hotels/${formData.hotelId}/bookings`,
     {

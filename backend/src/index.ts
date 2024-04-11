@@ -33,6 +33,7 @@ app.use(
 
 app.use(express.static(path.join(__dirname, "../../frontend/dist")));
 
+// endpoints setup
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/my-hotels", myHotelRoutes);

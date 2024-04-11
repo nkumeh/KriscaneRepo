@@ -56,17 +56,10 @@ test("should show hotel detail", async ({ page }) => {
 
 //   await expect(page.getByText("Total Cost: NGN357.00")).toBeVisible();
 
-//   const stripeFrame = page.frameLocator("iframe").first();
-//   await stripeFrame
-//     .locator('[placeholder="Card number"]')
-//     .fill("4242424242424242");
-//   await stripeFrame.locator('[placeholder="MM / YY"]').fill("04/30");
-//   await stripeFrame.locator('[placeholder="CVC"]').fill("242");
-//   await stripeFrame.locator('[placeholder="ZIP"]').fill("24225");
 
 //   await page.getByRole("button", { name: "Confirm Booking" }).click();
 //   await expect(page.getByText("Booking Saved!")).toBeVisible();
 
 //   await page.getByRole("link", { name: "My Bookings" }).click();
-//   await expect(page.getByText("Dublin Getaways")).toBeVisible();
+//   await expect(page.getByText("Kriscane Annex")).toBeVisible();
 // });

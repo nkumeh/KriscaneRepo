@@ -5,6 +5,7 @@ import { param, validationResult, body } from "express-validator";
 // Paystack doesn't offer an official Node.js library, so direct API calls are common.
 import axios from "axios";
 import verifyToken from "../middleware/auth";
+// import User from "../models/user";
 
 const router = express.Router();
 
@@ -97,12 +98,9 @@ router.post(
     const hotelId = req.params.hotelId;
     const hotel = await Hotel.findById(hotelId);
 
+
     if (!hotel) {
       return res.status(400).json({ message: "Hotel not found" });
-    }
-
-    if (!email) {
-      return res.status(400).json({ message: "Email required" });
     }
 
     // call from the backend for security
@@ -118,7 +116,7 @@ router.post(
           currency: "NGN", // Adjust the currency as needed
           metadata: {
             hotelId,
-            userId: req.userId, // Make sure this is being correctly set in your request
+            userId: req.userId, // being correctly set in your request
           },
         },
         {
@@ -155,10 +153,10 @@ router.post(
   verifyToken,
   async (req: Request, res: Response) => {
     const { hotelId } = req.params;
-    const email = req.body;
+    // const email = req.body;
 
     try {
-      const { transactionReference, email } = req.body;
+      const { transactionReference } = req.body;
 
       const verificationUrl = `https://api.paystack.co/transaction/verify/${encodeURIComponent(transactionReference)}`;
 
@@ -177,7 +175,6 @@ router.post(
 
       const newBooking: BookingType = {
         ...req.body,
-        email: email,
         userId: req.userId,
       };
 

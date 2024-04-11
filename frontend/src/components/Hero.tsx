@@ -6,8 +6,8 @@ const Hero = () => {
         <h1 className="text-5xl text-white font-bold">
           Find your next stay with us
         </h1>
-        <p className="text-2xl text-white">
-          Book a night at one of our hotel locations!
+        <p className="text-2xl text-white"> 
+          Experience comfort away from home at one of our hotel locations!
         </p>
       </div>
     </div>
